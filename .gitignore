@@ -1,2 +1,4 @@
 #build files
 /out/*
+#idea files
+/.idea/*
