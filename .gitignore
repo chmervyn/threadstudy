@@ -2,3 +2,4 @@
 /out/*
 #ignore intellij files
 /.idea/*
+/.idea_backup
