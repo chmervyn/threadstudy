@@ -1,4 +1,4 @@
 #build files
 /out/*
-#idea files
+#ignore intellij files
 /.idea/*
