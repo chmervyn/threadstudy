@@ -1,1 +1,10 @@
 反编译JIT编译器动态生成的汇编代码：hsdis    -- https://blog.csdn.net/vurtue/article/details/77713149
+#1: Place hsdis-amd64.dll to %JAVA_HOME%/jre/bin/server
+#2: vm arguments:
+    -server
+    -XX:-UseCompressedOops
+    -Xcomp
+    -XX:+UnlockDiagnosticVMOptions
+    -XX:CompileCommand=dontinline,*JITReorderingDemo.createHelper
+    -XX:CompileCommand=compileonly,*JITReorderingDemo.createHelper
+    -XX:+PrintAssembly
