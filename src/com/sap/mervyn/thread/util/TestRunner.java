@@ -15,15 +15,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ConcurrencyTest
 public class TestRunner {
     private static final Semaphore FLOW_CONTROL = new Semaphore(Runtime.getRuntime().availableProcessors());
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(new ThreadFactory() {
-        @Override
-        public Thread newThread(Runnable r) {
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool(r -> {
             Thread t = new Thread(r);
             t.setPriority(Thread.MAX_PRIORITY);
             t.setDaemon(false);
             return t;
         }
-    });
+    );
 
     private volatile boolean stop = false;
     private final AtomicInteger runs = new AtomicInteger(0);
@@ -31,7 +29,7 @@ public class TestRunner {
     private final int thinkTime;
     private final Method publishMethod;
     private final Method observerMethod;
-    private volatile Method setupMethod = null;
+    private volatile Method setupMethod;
     private final Object testCase;
     private final SortedMap<Integer, ExpectInfo> expectMap;
 
@@ -106,46 +104,40 @@ public class TestRunner {
 
     protected void doTest() {
 
-        Runnable publishTask = new Runnable() {
-            @Override
-            public void run() {
+        Runnable publishTask = () -> {
+            try {
+                publishMethod.invoke(testCase, new Object[] {});
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } finally {
+                FLOW_CONTROL.release(1);
+            }
+        };
+
+        Runnable observerTask = () -> {
+            try {
+                int result;
+
                 try {
-                    publishMethod.invoke(testCase, new Object[] {});
+                    result = Integer.valueOf(observerMethod.invoke(testCase, new Object[]{}).toString());
+                    ExpectInfo expectInfo = expectMap.get(Integer.valueOf(result));
+
+                    if (expectInfo != null) {
+                        expectInfo.hit();
+                    } else {
+                        expectInfo = new ExpectInfo("unexpected", 1);
+                        expectMap.putIfAbsent(result, expectInfo);
+                    }
+
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
-                } finally {
-                    FLOW_CONTROL.release(1);
                 }
-            }
-        };
-
-        Runnable observerTask = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    int result = -1;
-
-                    try {
-                        result = Integer.valueOf(observerMethod.invoke(testCase, new Object[]{}).toString());
-                        ExpectInfo expectInfo = expectMap.get(Integer.valueOf(result));
-
-                        if (expectInfo != null) {
-                            expectInfo.hit();
-                        } else {
-                            expectInfo = new ExpectInfo("unexpected", 1);
-                            ((ConcurrentMap<Integer, ExpectInfo>) expectMap).putIfAbsent(result, expectInfo);
-                        }
-
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                } finally {
-                    FLOW_CONTROL.release(1);
-                }
+            } finally {
+                FLOW_CONTROL.release(1);
             }
         };
 
@@ -174,7 +166,6 @@ public class TestRunner {
             try {
                 latch.await();
             } catch (InterruptedException e) {
-                ;
             }
         }
 
@@ -183,7 +174,6 @@ public class TestRunner {
         try {
             EXECUTOR_SERVICE.awaitTermination(2000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            ;
         }
 
         report();
@@ -195,7 +185,6 @@ public class TestRunner {
 
         @Override
         public void await() throws InterruptedException {
-            ;
         }
 
         @Override
@@ -204,7 +193,7 @@ public class TestRunner {
         }
 
         @Override
-        public void countDown() { ; }
+        public void countDown() {}
 
         @Override
         public long getCount() { return 0; }
@@ -248,15 +237,12 @@ public class TestRunner {
             return;
         }
 
-        EXECUTOR_SERVICE.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    task.run();
-                } finally {
-                    FLOW_CONTROL.release(1);
-                    latch.countDown();
-                }
+        EXECUTOR_SERVICE.submit(() -> {
+            try {
+                task.run();
+            } finally {
+                FLOW_CONTROL.release(1);
+                latch.countDown();
             }
         });
     }
