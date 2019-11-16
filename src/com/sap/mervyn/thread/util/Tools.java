@@ -1,5 +1,7 @@
 package com.sap.mervyn.thread.util;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Random;
 
 public class Tools {
@@ -28,6 +30,21 @@ public class Tools {
         } catch (InterruptedException e) {
             System.err.println("Exception inside Tools.randomPause, go to interrupt sleep thread");
             Thread.currentThread().interrupt();
+        }
+    }
+
+    public static void silentClose(Closeable... closeables) {
+        if (closeables == null) return;
+
+        for (Closeable closeable : closeables) {
+            if (closeable == null) continue;
+
+            try {
+                closeable.close();
+            } catch (Exception ignored) {
+                // do nothing
+            }
+
         }
     }
 
