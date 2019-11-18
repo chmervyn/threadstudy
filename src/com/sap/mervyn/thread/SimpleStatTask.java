@@ -2,10 +2,7 @@ package com.sap.mervyn.thread;
 
 import com.sap.mervyn.thread.util.Tools;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class SimpleStatTask extends AbstractStatTask {
     private final InputStream in;
@@ -30,5 +27,14 @@ public class SimpleStatTask extends AbstractStatTask {
         } finally {
             Tools.silentClose(logFileReader);
         }
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        new Thread(
+                new SimpleStatTask(
+                        new FileInputStream("C:\\SuccessFactors\\ec\\tomcat-sfs\\logs"),
+                        100, 3, "test", "test"
+                )
+        ).start();
     }
 }
