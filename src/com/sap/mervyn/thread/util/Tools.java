@@ -48,4 +48,27 @@ public class Tools {
         }
     }
 
+    public static void split(String str, String[] result, char delimeter) {
+        int partsCount = result.length;
+        int posOfDelimeter;
+        int fromIndex = 0;
+        String recordField;
+        int i = 0;
+        while (i < partsCount) {
+            posOfDelimeter = str.indexOf(delimeter, fromIndex);
+            if (posOfDelimeter == -1) {
+                recordField = str.substring(fromIndex);
+                result[i] = recordField;
+                break;
+            }
+
+            recordField = str.substring(fromIndex, posOfDelimeter);
+            result[i] = recordField;
+            i++;
+            fromIndex = posOfDelimeter + 1;
+        }
+
+
+    }
+
 }
