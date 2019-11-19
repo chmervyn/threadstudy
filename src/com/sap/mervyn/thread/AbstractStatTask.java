@@ -27,7 +27,7 @@ public abstract class AbstractStatTask implements Runnable {
         this.recordProcessor = recordProcessor;
     }
 
-    protected abstract void doCalculate() throws IOException, InterruptedException;
+    protected abstract void doCalculate() throws IOException;
 
     @Override
     public void run() {

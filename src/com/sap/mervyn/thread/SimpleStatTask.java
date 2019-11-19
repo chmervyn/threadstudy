@@ -13,7 +13,7 @@ public class SimpleStatTask extends AbstractStatTask {
     }
 
     @Override
-    protected void doCalculate() throws IOException, InterruptedException {
+    protected void doCalculate() throws IOException {
         String strBufferSize = System.getProperty("x.input.buffer");
         int inputBufferSize = strBufferSize != null ? Integer.valueOf(strBufferSize) : 8192 * 4;
 
@@ -30,10 +30,11 @@ public class SimpleStatTask extends AbstractStatTask {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
+
         new Thread(
                 new SimpleStatTask(
-                        new FileInputStream("C:\\SuccessFactors\\ec\\tomcat-sfs\\logs"),
-                        100, 3, "test", "test"
+                        new FileInputStream("/Users/i347764/Documents/successfactor/threadstudy/resource/app/log.txt"),
+                        100, 3, "getPrice", "*"
                 )
         ).start();
     }
