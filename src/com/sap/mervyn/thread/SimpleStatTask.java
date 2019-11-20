@@ -30,10 +30,10 @@ public class SimpleStatTask extends AbstractStatTask {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-
+        String logFile = System.getProperty("user.dir") + "/resource/app/log.txt";
         new Thread(
                 new SimpleStatTask(
-                        new FileInputStream("/Users/i347764/Documents/successfactor/threadstudy/resource/app/log.txt"),
+                        new FileInputStream(logFile),
                         100, 3, "getPrice", "*"
                 )
         ).start();

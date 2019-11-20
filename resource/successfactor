@@ -1,0 +1,3 @@
+tzhou01@ECSkun3H    Initial1
+https://qacand-api.lab-rot.ondemand.com/odata/v2/PaymentInformationV3?fromDate=1990-01-01&toDate=9999-12-31&$filter=lastModifiedDateTime gt datetimeoffset'2019-11-13T12:58:00'
+https://qacand-api.lab-rot.ondemand.com/odata/v2/PerPerson?$expand=employmentNav,employmentNav/paymentInformationNav&$format=json&fromDate=1990-01-01&toDate=9999-12-31&$filter=lastModifiedDateTime gt datetimeoffset'2019-11-13T12:58:00' or employmentNav/paymentInformationNav/lastModifiedDateTime gt datetimeoffset'2019-11-13T12:58:00'
