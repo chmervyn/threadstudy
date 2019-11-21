@@ -29,7 +29,7 @@ public class Tools {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
             System.err.println("Exception inside Tools.randomPause, go to interrupt sleep thread");
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt();         // 保留线程中断标志
         }
     }
 
