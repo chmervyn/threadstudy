@@ -1,10 +1,11 @@
 package com.sap.mervyn.thread.util;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Random;
 
 public class Tools {
+
+    private static final Random rnd = new Random();
 
     private Tools() {}
 
@@ -23,13 +24,23 @@ public class Tools {
     }
 
     public static void randomPause(int maxPauseTime) {
-        int sleepTime = new Random().nextInt(maxPauseTime);
+        int sleepTime = rnd.nextInt(maxPauseTime);
 
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
             System.err.println("Exception inside Tools.randomPause, go to interrupt sleep thread");
             Thread.currentThread().interrupt();         // 保留线程中断标志
+        }
+    }
+
+    public static void randomPause(int maxPauseTime, int minPauseTime) {
+        int sleepTime = maxPauseTime == minPauseTime ? minPauseTime : rnd
+                .nextInt(maxPauseTime - minPauseTime) + minPauseTime;
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
