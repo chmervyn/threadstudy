@@ -1,6 +1,10 @@
 package com.sap.mervyn.thread.util;
 
-import java.io.Closeable;
+import java.io.*;
+import java.math.BigInteger;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class Tools {
@@ -78,8 +82,44 @@ public class Tools {
             i++;
             fromIndex = posOfDelimeter + 1;
         }
+    }
 
+    public static String md5sum(final InputStream in) throws NoSuchAlgorithmException, IOException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] buff = new byte[1024];
+        try (DigestInputStream dis = new DigestInputStream(in, md)) {
+            while (dis.read(buff) != -1) {
 
+            }
+        }
+
+        byte[] digest= md.digest();
+        BigInteger bigInt = new BigInteger(1, digest);
+        String checkSum = bigInt.toString(16);
+
+        while (checkSum.length() < 32) {
+            checkSum = "0" + checkSum;
+        }
+
+        return checkSum;
+    }
+
+    public static String md5sum(final File file) throws IOException, NoSuchAlgorithmException {
+        return md5sum(new BufferedInputStream(new FileInputStream(file)));
+    }
+
+    public static String md5sum(String str) throws IOException, NoSuchAlgorithmException {
+        ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes("UTF-8"));
+        return md5sum(in);
+    }
+
+    public static void delayedAction(String prompt, Runnable action, int delay /*seconds*/) {
+        Debug.info("%s in %d seconds.", prompt, delay);
+        try {
+            Thread.sleep(delay * 1000);
+        } catch (InterruptedException ignored) {
+        }
+        action.run();
     }
 
 }
