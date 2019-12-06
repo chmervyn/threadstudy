@@ -2,12 +2,10 @@ package com.sap.mervyn.thread.ch9;
 
 import com.sap.mervyn.thread.util.Debug;
 import com.sap.mervyn.thread.util.Tools;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
